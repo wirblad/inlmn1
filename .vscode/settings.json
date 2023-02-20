@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\Henrik\\source\\c\\inlmn1",
+            "binaryPath": "c:\\Users\\Henrik\\source\\c\\inlmn1\\main.exe",
+            "binaryArgs": []
+        }
+    ]
+}
