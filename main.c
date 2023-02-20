@@ -41,7 +41,7 @@ void play(){
 
     int randomNumber = rand() % 100 + 1;
 
-    printf("TEST: %d\n", randomNumber); //--------TEST LINE -------------
+    //printf("TEST: %d\n", randomNumber); //--------TEST LINE -------------
 
     stillGuesing = true;
     nrOfGuesses = 1;
