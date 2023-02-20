@@ -6,6 +6,7 @@
 #include <time.h>
 #include "safeinput.h"
 
+
 struct player{
 
     char name[50];
@@ -106,11 +107,13 @@ void saveTolowscore(int nrOfGuesses, int placeInLowScore){
     player.completeNrOfGuess = nrOfGuesses;
     strcpy(player.dateAndTime, buffer);
     GetInput("Enter player name: ", player.name, sizeof(player.name));
+    //shift position in lowscore
     for(int i = 4 ; i > placeInLowScore ; i--){
         list[i] = list[i-1]; 
     }
     list[placeInLowScore] = player;
     printf("\nINFO ABOUT THIS ROUND: \n------PLAYER: %s\n------GUESSES: %d\n------DATE: %s\n\n", player.name, player.completeNrOfGuess, player.dateAndTime);
+    saveToFile();
 }
 
 void showLowScore(){
@@ -118,6 +121,58 @@ void showLowScore(){
     for( int i = 0 ; i <= 4; i++){
         printf("POS %d\n------PLAYER: %s\n------GUESSES: %d\n------DATE: %s\n", i+1 , list[i].name, list[i].completeNrOfGuess, list[i].dateAndTime);
     }
+}
+
+void saveToFile(){
+
+FILE *outfile;
+     
+// open file for writing
+outfile = fopen ("lowscore.dat", "w");
+
+if (outfile == NULL){
+    fprintf(stderr, "\nError opened file\n");
+    exit (1);
+}
+
+fwrite (&list[0], sizeof(struct player), 1, outfile);
+fwrite (&list[1], sizeof(struct player), 1, outfile);
+fwrite (&list[2], sizeof(struct player), 1, outfile);
+fwrite (&list[3], sizeof(struct player), 1, outfile);
+fwrite (&list[4], sizeof(struct player), 1, outfile);
+     
+if(fwrite != 0)
+    printf("contents to file written successfully !\n");
+else
+    printf("error writing file !\n");
+ 
+// close file
+fclose (outfile);
+
+}
+
+void loadFile(){
+
+    FILE *infile;
+     
+    // Open person.dat for reading
+    infile = fopen ("lowscore.dat", "r");
+    if (infile == NULL)
+    {
+        fprintf(stderr, "\nError opening file\n");
+        exit (1);
+    }
+     
+    // read file contents
+    
+    fread (&list[0], sizeof(struct player), 1, infile);
+    fread (&list[1], sizeof(struct player), 1, infile);
+    fread (&list[2], sizeof(struct player), 1, infile);
+    fread (&list[3], sizeof(struct player), 1, infile);
+    fread (&list[4], sizeof(struct player), 1, infile);
+      
+    // close file
+    fclose (infile);
 }
 
 
@@ -133,6 +188,7 @@ void main(){
         else if(menyChoice == 2)
             break;
         else if(menyChoice == 3){
+            loadFile();
             showLowScore();
         }
     }
