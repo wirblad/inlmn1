@@ -4,36 +4,56 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include <time.h>
-#include "safeinput.h" 
+#include "safeinput.h"
+
+struct player{
+
+    char name[50];
+    char dateAndTime[50];
+    int completeNrOfGuess;
+
+};
+
+struct player list[4];
 
 
-void main(){
+int meny(){
 
-    bool playAgain = true;
+    printf("\n1. PLAY AGAIN\n2. END\n3. LOWSCORE\n\n");
+    int menyChoice;
+
+    while(GetInputInt("", &menyChoice) == false || menyChoice > 3 || menyChoice < 1 ){
+
+                printf("PLEASE CHOOSE A NUMBER 1-3 TRY AGAIN:\n");
+                printf("1. PLAY AGAIN\n2. END\n3. LOWSCORE\n");   
+            }
+    return menyChoice;
+}
+
+void play(){
+
     bool stillGuesing;
     int playerGuess; 
     int nrOfGuesses;
 
     srand(time(NULL));
 
-    while(playAgain){
+    int randomNumber = rand() % 100 + 1;
 
-        int randomNumber = rand() % 100 + 1;
+    printf("TEST: %d\n", randomNumber); //--------TEST LINE -------------
 
-        printf("TEST: %d\n", randomNumber); //TEST LINE
+    stillGuesing = true;
+    nrOfGuesses = 1;
 
-        stillGuesing = true;
-        nrOfGuesses = 1;
-
-        printf("GUESS A NUMBER BETWEEN 1 - 100\n");
+    printf("GUESS A NUMBER BETWEEN 1 - 100\n");
         
         while(stillGuesing){
 
             printf("GUESS%d: ",nrOfGuesses);
 
-            while(GetInputInt("", &playerGuess) == false){
+            while(GetInputInt("", &playerGuess) == false || playerGuess < 1 || playerGuess > 100){
 
-                printf("You can only enter digits TRY AGAIN:\n");
+                printf("You can only enter digits and guesses between 1 - 100 TRY AGAIN:\n");
                 printf("GUESS%d: ",nrOfGuesses);
             }
                         
@@ -51,29 +71,69 @@ void main(){
             else if (playerGuess == randomNumber){
 
                 printf("RIGHT!! You guessed the right number in %d tries\n", nrOfGuesses);
+                
                 stillGuesing = false;
-            }
-        }
+                checklowscore(nrOfGuesses);  
+            } 
+        }    
+}
 
-        while(true){
-           
-            char input[10];
-            GetInput("Do you want to play again (YES/NO)? ", input, sizeof(input));
+void checklowscore(int nrOfGuesses){
+ 
+    for( int i = 0 ; i <= 4; i++){
 
-                if(strcmp("NO", input) == 0 ){
-                    printf("Thank you for playing!");
-                    playAgain = false;
-                    break;
-                }
-
-                else if(strcmp("YES", input) == 0 ){
-                    playAgain = true;
-                    break;
-                }
-                else
-                    printf("Yes or no please ");
-        }
-
+        if ( nrOfGuesses > list[i].completeNrOfGuess){
+        
+            printf("\nCONGRATZ!!! U MADE IT TO THE LOW SCORE!!!\n");
+            saveTolowscore(nrOfGuesses, i);
+            break;
+        }   
     }
+}
+
+void saveTolowscore(int nrOfGuesses, int placeInLowScore){
+
+    time_t rawtime;
+    struct tm *info;
+    char buffer[50];
+
+    time( &rawtime );
+    info = localtime( &rawtime );
+    strftime(buffer,80,"%x - %I:%M%p", info);
+
+    struct player player;
     
+    player.completeNrOfGuess = nrOfGuesses;
+    strcpy(player.dateAndTime, buffer);
+    GetInput("Enter player name: ", player.name, sizeof(player.name));
+    for(int i = 4 ; i > placeInLowScore ; i--){
+        list[i] = list[i-1]; 
+    }
+    list[placeInLowScore] = player;
+    printf("\nINFO ABOUT THIS ROUND: \n------PLAYER: %s\n------GUESSES: %d\n------DATE: %s\n\n", player.name, player.completeNrOfGuess, player.dateAndTime);
+}
+
+void showLowScore(){
+
+    for( int i = 0 ; i <= 4; i++){
+        printf("POS %d\n------PLAYER: %s\n------GUESSES: %d\n------DATE: %s\n", i+1 , list[i].name, list[i].completeNrOfGuess, list[i].dateAndTime);
+    }
+}
+
+
+void main(){
+
+    while(true){
+
+        int menyChoice = meny();
+    
+        if(menyChoice == 1){
+            play();  
+        }
+        else if(menyChoice == 2)
+            break;
+        else if(menyChoice == 3){
+            showLowScore();
+        }
+    }
 }
