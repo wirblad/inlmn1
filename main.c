@@ -17,6 +17,32 @@ struct player{
 
 struct player list[4];
 
+int meny();
+void play();
+void checklowscore(int nrOfGuesses);
+void saveTolowscore(int nrOfGuesses, int placeInLowScore);
+void showLowScore();
+void saveToFile();
+void loadFile();
+
+void main(){
+
+    loadFile();
+    while(true){
+
+        int menyChoice = meny();
+    
+        if(menyChoice == 1){
+            play();  
+        }
+        else if(menyChoice == 2)
+            break;
+        else if(menyChoice == 3){
+            loadFile();
+            showLowScore();
+        }
+    }
+}
 
 int meny(){
 
@@ -173,23 +199,4 @@ void loadFile(){
       
     // close file
     fclose (infile);
-}
-
-
-void main(){
-
-    while(true){
-
-        int menyChoice = meny();
-    
-        if(menyChoice == 1){
-            play();  
-        }
-        else if(menyChoice == 2)
-            break;
-        else if(menyChoice == 3){
-            loadFile();
-            showLowScore();
-        }
-    }
 }
